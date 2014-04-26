@@ -1,4 +1,0 @@
-[autorun]
-shellexecute=OSCAD_Setup.exe
-icon=logo.ico
-label=Oscad

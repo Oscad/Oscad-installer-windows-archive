@@ -1,8 +1,0 @@
-
-.ac lin 20 1Hz 10Meg
-
-
-.end
-.control
-run
-.endc
