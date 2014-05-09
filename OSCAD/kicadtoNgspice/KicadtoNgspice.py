@@ -1241,6 +1241,47 @@ def convertICintoBasicBlocks(schematicInfo,outputOption):
         print "-----------------------------------------------------------"
         if ic=="": ic="0"
         schematicInfo.insert(index,".ic v("+words[1]+")="+ic)
+      elif compType=="transfo":
+        schematicInfo.append("a"+str(k)+" ("+words[1]+" "+words[2]+") (2mmf "+words[2]+") primary")
+        k=k+1
+        print "-----------------------------------------------------------\n"
+        print "Add parameters for primary "
+	num_turns=raw_input('  Enter the number of turns in primary (default=310): ')	
+        print "-----------------------------------------------------------\n"
+        if num_turns=="": num_turns="310"
+        schematicInfo.append(".model primary lcouple (num_turns = "+num_turns+ ")")
+        schematicInfo.append("a"+str(k)+" (2mmf 3mmf) iron_core")
+        k=k+1
+        print "-----------------------------------------------------------\n"
+        inp1=raw_input(' Do you want to populate the B-H table?y/n (if n, default values will be used): ')
+        if inp1=='y' or inp1=='Y':
+         print "Enter the values in the H, B table to construct B-H curve  "
+	 inp="y"
+	 h_array= "H_array = [ "
+         b_array = "B_array = [ "
+	 while inp=="y":
+	   h1=raw_input('  Enter H value: ')
+           h_array = h_array+ h1+" "
+	   b1=raw_input('  Enter corresponding B value: ')
+           b_array = b_array+ b1+" "
+	   inp=raw_input(' Do you want to continue(y/n): ')
+         modelline = h_array+" ] " + b_array+" ]"
+        else:
+         modelline = "H_array = [-1000 -500 -375 -250 -188 -125 -63 0 63 125 188 250 375 500 1000] B_array = [-3.13e-3 -2.63e-3 -2.33e-3 -1.93e-3 -1.5e-3 -6.25e-4 -2.5e-4 0 2.5e-4 6.25e-4 1.5e-3 1.93e-3 2.33e-3 2.63e-3 3.13e-3]"
+        area =raw_input( 'Enter the cross-sectional area of the core: (default = 1)')
+        length =raw_input( 'Enter the core length: (default = 0.01)')
+        print "----------------------------------------------\n"
+        if area=="": area="1"
+        if length=="":length="0.01"
+        schematicInfo.append(".model iron_core core ("+modelline+" area = "+area+" length = "+length +")")
+        schematicInfo.append("a"+str(k)+" ("+words[4]+" "+words[3]+") (3mmf "+words[3]+") secondary")
+        k=k+1
+        print "-----------------------------------------------------------\n"
+        print "Add parameters for secondary "
+	num_turns2=raw_input('  Enter the number of turns in secondary (default=620): ')	
+        print "-----------------------------------------------------------\n"
+        if num_turns2=="": num_turns2="620"
+        schematicInfo.append(".model secondary lcouple (num_turns = "+num_turns2+ ")")
       else: 
         schematicInfo.insert(index,compline)
     # Update option information
@@ -1333,7 +1374,22 @@ for eachline in schematicInfo:
     modelName=words[4]
     index=schematicInfo.index(eachline)
     schematicInfo.remove(eachline)
-    schematicInfo.insert(index,words[0]+" "+words[1]+" "+words[2]+" "+words[3]+" "+words[3]+" "+words[4])
+    width=raw_input('  Enter width of mosfet '+words[0]+'(default=100u):')
+    length=raw_input('  Enter length of mosfet '+words[0]+'(default=5u):')
+    multiplicative_factor=raw_input('  Enter multiplicative factor of mosfet '+words[0]+'(default=1):')
+    AD=raw_input('  Enter drain area, AD of mosfet '+words[0]+'(default=5*(L/2)*W): ')
+    AS=raw_input('  Enter source area, AS of mosfet '+words[0]+'(default=5*(L/2)*W): ')
+    PD=raw_input('  Enter drain perimeter, PD of mosfet '+words[0]+'(default=2*W+10*L/2): ')
+    PS=raw_input('  Enter source perimeter, PS of mosfet '+words[0]+'(default=2*W+10*L/2): ')
+    if width=="": width="0.0001"
+    if multiplicative_factor=="": multiplicative_factor="1"
+    if length=="": length="0.000005"
+    if PD=="": PD = 2*float(width)+10*float(length)/2
+    if PS=="": PS = 2*float(width)+10*float(length)/2
+    if AD=="": AD = 5*(float(length)/2)*float(width)
+    if AS=="": AS = 5*(float(length)/2)*float(width)
+    
+    schematicInfo.insert(index,words[0]+" "+words[1]+" "+words[2]+" "+words[3]+" "+words[3]+" "+words[4]+" "+'M='+multiplicative_factor+" "+'L='+length+" "+'W='+width+" "+'PD='+str(PD)+" "+'PS='+str(PS)+" "+'AD='+str(AD)+" "+'AS='+str(AS))
     if modelName in modelList:
        continue
     modelList.append(modelName)       

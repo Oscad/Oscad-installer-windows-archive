@@ -1,2 +1,2 @@
 #!/usr/bin/python
-OSCAD_HOME="/home/hardik/OSCAD"
+OSCAD_HOME="C:/OSCAD/OSCAD"
