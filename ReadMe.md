@@ -17,7 +17,7 @@ equation for each simulation step. This feature is unique to OSCAD.
 
 ## System requirements
 
-* Ubuntu 12.04(32/64-bits) or later
+* Operating system - Windows XP and above
 * Scilab 5.4.0 or later
 * KiCad(Optional, will be installed by OSCAD installer)
 * NgSpice(Optional, will be installed by OSCAD  installer)
